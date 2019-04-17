@@ -1,11 +1,7 @@
 {
-    "watch": [
-        "app/dev",
-        "config",
-        "server.ts"
-    ],
+    "watch": ["app/dev"],
     "ext": "ts",
     "execMap": {
-        "ts": "sucrase-node server.ts"
+        "ts": "rm -rf app/build/* && tsc app/dev/* --outdir app/build && rsync -avzh app/build/ public/js/ && sucrase-node"
     }
 }

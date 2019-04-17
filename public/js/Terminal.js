@@ -22,11 +22,11 @@ var Terminal = /** @class */ (function () {
     Terminal.prototype.typing = function (value) {
         if (arguments.length == 0 || (arguments.length > 0 && value === true)) {
             document.addEventListener('keydown', this.specialTyping.bind(this), false);
-            document.addEventListener('keydown', this.normalTyping, false);
+            document.addEventListener('keydown', this.normalTyping.bind(this), false);
         }
         else if (value === false) {
             document.removeEventListener('keydown', this.specialTyping.bind(this), false);
-            document.removeEventListener('keydown', this.normalTyping, false);
+            document.removeEventListener('keydown', this.normalTyping.bind(this), false);
         }
     };
     Terminal.prototype.specialTyping = function (e) {

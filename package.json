@@ -6,7 +6,6 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon",
-    "dev": "nodemon app/dev/index.ts",
     "preprod": "rm -rf ./app/build/*",
     "prod": "tsc ./app/dev/* --outdir ./app/build",
     "postprod": "rsync -avzh ./app/build/ ./public/js/ && nodemon ./server",
