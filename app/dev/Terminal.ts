@@ -1,4 +1,5 @@
 class Terminal {
+    private terminalContainer: any;
     public writer: any;
     public fixedWrite: any;
     public padWriter: any;
@@ -11,12 +12,23 @@ class Terminal {
         { min: 65, max: 90 },
         { min: 48, max: 57 }
     ];
-
-
+    private users: Array<{ login: string, password: string, permission: number }> = [
+        {login: 'luiz', password: 'terminaldoluiz', permission: 0}
+    ];
+    private session: { login: string, password: string, permission: number };
 
     public constructor(options: {typing?: boolean}){
-        this.writer = document.getElementById("writer");
-        this.previousCommands = document.getElementById("previousCommands");
+        this.terminalContainer = document.getElementById("terminalContainer");
+
+        this.writer = document.createElement('span');
+        this.previousCommands = document.createElement('div');
+
+        this.writer.setAttribute("id", "writer");
+        this.previousCommands.setAttribute("id", "previousCommands");
+
+        this.terminalContainer.appendChild(this.previousCommands);
+        this.terminalContainer.appendChild(this.writer);
+
         this.command = '';
         this.prepareWriter();
         this.padWriter = document.getElementById("padWriter");
@@ -25,6 +37,8 @@ class Terminal {
         this.loadStandardCommands();
         if(options !== undefined && options.typing !== undefined) this.typing(options.typing);
         else this.typing();
+
+        console.log(this.logar());
     }
 
     public typing(value?: boolean): void{
@@ -38,7 +52,7 @@ class Terminal {
         }
     }
 
-    private specialTyping(e): void{
+    private specialTyping(e: any): void{
         if(e.key == "Backspace" && this.command.length > 0){
             this.command = this.command.substr(0, this.command.length - 1);
         }
@@ -66,7 +80,7 @@ class Terminal {
         }
     }
 
-    private prepareWriter(): void{
+    private prepareWriter(options?: { user?: string, path?: string, userType?: string }): void{
         if(arguments.length > 0) this.fixedWrite =  `<span id='fixedWriter'>
                                                     <span class='userHost'>${arguments[0].user || 'anon'}@dev</span>: 
                                                     <span class='path'>${arguments[0].path || '~'}</span>
@@ -120,10 +134,39 @@ class Terminal {
                     this.command = '';
                     this.refreshWriter();
                     document.removeEventListener('keydown', promessaCumprida);
+                    this.typing();
                     return resolve(aux);
                 }else if(e.key == "Backspace"){
                     this.command = this.command.substr(0, this.command.length - 1);
                     this.refreshWriter();
+                }       
+            }
+            document.addEventListener('keydown', promessaCumprida);
+        });
+    }    
+    
+    private readPassword(): Promise<string>{
+        return new Promise((resolve, reject) => {
+            this.typing(false);
+
+            let promessaCumprida: any = (e: any) => {
+                for(let noExit in this.noExits){
+                    if((typeof this.noExits[noExit] == 'number' && e.keyCode == this.noExits[noExit]) || (e.keyCode >= this.noExits[noExit].min && e.keyCode <= this.noExits[noExit].max)){
+                        this.command += e.key;
+                        //this.refreshWriter();
+                    }
+                }
+                if(e.key == "Enter"){
+                    this.write(this.command);
+                    let aux = this.command;
+                    this.command = '';
+                    this.refreshWriter();
+                    document.removeEventListener('keydown', promessaCumprida);
+                    this.typing();
+                    return resolve(aux);
+                }else if(e.key == "Backspace"){
+                    this.command = this.command.substr(0, this.command.length - 1);
+                    //this.refreshWriter();
                 }       
             }
             document.addEventListener('keydown', promessaCumprida);
@@ -142,5 +185,58 @@ class Terminal {
 
     private restartTerminal(): void{
         location.reload();
+    }
+
+    private verifyLogin(): Promise<Array<{ login: string, password: string, permission: number }>>{
+        return new Promise((resolve, reject) => {
+            this.write('Digite seu login:');
+            let loginStart = this.read();
+            loginStart.then(login => {
+                let profiles: Array<{ login: string, password: string, permission: number }> = [];
+                this.users.forEach(element => {
+                    if(login === element.login){
+                        profiles.push(element);
+                    }
+                });
+                resolve(profiles);
+                /*if(auth){
+                    this.write('Digite sua senha:');
+                    let password = this.readPassword();
+                    password.then(pass => {
+                        let authP: boolean = false;
+                        for(let i in this.users){
+                            if(pass === this.users[i].password){
+                                authP = true;
+                                if(authP) return resolve(this.users[i]);
+                            }
+                        }
+                        throw new Error("Senha inválida. Digite <i>restart</i> para reiniciar o terminal");
+                    });
+                }else reject(new Error("Usuário inválido. Digite <i>restart</i> para reiniciar o terminal"));*/
+            });
+        });
+    }
+
+    private verifyPassword(users: Array<{ login: string, password: string, permission: number }>): Promise<{ login: string, password: string, permission: number }>{
+        return new Promise((resolve, reject) => {
+            this.write('Digite sua senha:');
+            let password = this.readPassword();
+            password.then(pass => {
+                users.forEach(element => {
+                    if(pass === element.password){
+                        resolve(element);
+                    }
+                });
+            });
+        });
+    }
+
+    async logar(): Promise<{ login: string, password: string, permission: number }>{
+        const loginSuccessfully = await this.verifyLogin();
+        if(loginSuccessfully.length > 0){
+            const passwordSuccessfully = await this.verifyPassword(loginSuccessfully);
+            return passwordSuccessfully;
+        }
+        else return null;
     }
 }

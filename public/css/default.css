@@ -11,6 +11,7 @@
     background-color: #000;
     color: lime;
     overflow: scroll;
+    padding: 5px 3px;
 }
 
 #fixedWriter > .userHost{

@@ -8,9 +8,5 @@ window.onload = function(){
 }
 
 function principal(){
-    t.write("Qual seu nome?")
-    let resposta = t.read();
-    resposta.then(res => {
-        t.write(`O nome digitado foi: ${res}`);
-    });
+    
 }
