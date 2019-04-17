@@ -1,5 +1,6 @@
+var t;
 window.onload = function(){
-    initializeTerminal({
+    t = new Terminal({
         typing: false
     });
 
@@ -7,13 +8,13 @@ window.onload = function(){
 }
 
 function principal(){
-    write("Qual seu nome?")
-    let resposta = read();
+    t.write("Qual seu nome?")
+    let resposta = t.read();
     resposta.then(res => {
         let amor = /mariana/i, yes = /y/i, no = /n/i;
         if(amor.test(res)){
-            write("<br>Você tem uma nova mensagem. Gostaria de ler? < Y / n >");
-            let resposta2 = read();
+            t.write("<br>Você tem uma nova mensagem. Gostaria de ler? < Y / n >");
+            let resposta2 = t.read();
             resposta2.then(res2 => {
                 let texto = "";
                 if(yes.test(res2)){
@@ -34,13 +35,13 @@ function principal(){
                 }else{
                     texto = `Comando irreconhecido! Saindo...`;
                 }
-                write(texto);
-                write('<br>Digite <b>restart</b> caso queira reiniciar este terminal.');
-                typing();
+                t.write(texto);
+                t.write('<br>Digite <b>restart</b> caso queira reiniciar este terminal.');
+                t.typing();
             })
         }else{
-            write('<br>Digite <b>restart</b> caso queira reiniciar este terminal.');
-            typing();
+            t.write('<br>Digite <b>restart</b> caso queira reiniciar este terminal.');
+            t.typing();
         }
     });
 }
