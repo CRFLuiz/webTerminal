@@ -1,0 +1,49 @@
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+#terminalContainer{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    color: lime;
+    overflow: scroll;
+}
+
+#fixedWriter > .userHost{
+    color: #FCE94F;
+    font-weight: bold;
+}
+
+#fixedWriter > .path{
+    color: #729FCF;
+    font-weight: bold;
+}
+
+#fixedWriter > .userType{
+    color: lime;
+}
+
+#fixedWriter > .padWriter0{
+    color: transparent;
+    margin-left: 0;
+    width: 10px;
+    height: 20px;
+    display: inline-block;
+}
+
+#fixedWriter > .padWriter1{
+    border: 1px solid lime;
+    background-color: lime;
+    margin-left: 0;
+    width: 10px;
+    height: 20px;
+    display: inline-block;
+}
+
+#fixedWriter > #commandLine{
+    margin: 0 0 0 5px;
+}
